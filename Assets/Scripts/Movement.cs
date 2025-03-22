@@ -45,7 +45,7 @@ public class Movement : MonoBehaviour
         {
             Rigidbody2D rigidBody;
             rigidBody = GetComponent<Rigidbody2D>();
-            float verticalMovement = rigidBody.velocity.y;
+            float verticalMovement = rigidBody.linearVelocity.y;
             if (verticalMovement != 0)
             {
                 speed = masterSpeed / 3;

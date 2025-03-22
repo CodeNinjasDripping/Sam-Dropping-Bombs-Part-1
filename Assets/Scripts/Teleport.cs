@@ -34,6 +34,6 @@ public class Teleport : MonoBehaviour
 
         transform.position = new Vector3(randomX, randomY);
         var rigidbody = GetComponent<Rigidbody>();
-        rigidbody.velocity = Vector3.zero;
+        rigidbody.linearVelocity = Vector3.zero;
     }
 }
