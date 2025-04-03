@@ -7,7 +7,6 @@ public class Reset : MonoBehaviour
 {
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.tag == "Player")
-            SceneManager.LoadScene(0);
+        Destroy(gameObject);
     }
 }
