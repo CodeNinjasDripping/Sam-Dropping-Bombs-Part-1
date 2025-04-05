@@ -6,7 +6,7 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     
-    private Vector2 screenBounds;
+    private Vector3 screenBounds;
     public GameObject title;
     private Spawner spawner;
     public GameObject splash;
@@ -15,12 +15,21 @@ public class GameManager : MonoBehaviour
     private bool gameStarted = false;
     public TMP_Text scoreText;
     public int pointsWorth = 1;
-    private int score;
+    public int score;
+
+    private int bestScore = 0;
+    public TMP_Text bestScoreText;
+    public Color normalColor;
+    public Color bestScoreColor;
+
+    private bool beatBestScore;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
         spawner = GameObject.Find("Spawner").GetComponent<Spawner>();
+        screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
         scoreText.enabled = false;
+        bestScoreText.enabled = false;
     }
 
     // Update is called once per frame
@@ -29,6 +38,8 @@ public class GameManager : MonoBehaviour
         spawner.active = false;
         title.SetActive(true);
         splash.SetActive(true);
+        bestScore = PlayerPrefs.GetInt("BestScore");
+        bestScoreText.text = "Best Score: " + bestScore.ToString();
     }
 
     void Update()
@@ -56,7 +67,8 @@ public class GameManager : MonoBehaviour
         var nextBomb = GameObject.FindGameObjectsWithTag("Bomb");
         foreach (GameObject bombObject in nextBomb)
         {
-            if (bombObject.transform.position.y < (-screenBounds.Y - 12))
+            print(-screenBounds.y);
+            if (bombObject.transform.position.y < (-screenBounds.y - 12))
             {
                 if (gameStarted)
                 {
@@ -70,6 +82,7 @@ public class GameManager : MonoBehaviour
 
     void ResetGame()
     {
+        bestScoreText.color = normalColor;
         spawner.active = true;
         title.SetActive(false);
         player = Instantiate(playerPrefab,new Vector3(0, 0, 0), playerPrefab.transform.rotation);
@@ -78,6 +91,8 @@ public class GameManager : MonoBehaviour
         score = 0;
         scoreText.enabled = true;
         scoreText.text = "Score: " + score.ToString();
+        beatBestScore = false;
+        bestScoreText.enabled = true;
     }
 
     void OnPlayerKilled()
@@ -85,5 +100,13 @@ public class GameManager : MonoBehaviour
         spawner.active = false;
         gameStarted = false;
         splash.SetActive(true);
+        if (score > bestScore)
+        {
+            bestScoreText.color = bestScoreColor;
+            bestScore = score;
+            PlayerPrefs.SetInt("BestScore", bestScore);
+            beatBestScore = true;
+            bestScoreText.text = "Best Score: " + bestScore.ToString();
+        }    
     }
 }
